@@ -17,3 +17,11 @@ class Perfil(models.Model):
 
     def __str__(self):
         return f"{self.user.username} ({self.get_rol_display()})"
+    
+    @property
+    def es_admin(self):
+        return self.rol == self.ADMIN
+
+    @property
+    def es_vendedor(self):
+        return self.rol == self.VENDEDOR
