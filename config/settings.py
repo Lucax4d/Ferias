@@ -132,3 +132,4 @@ MAILERS = {
 
 LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'America/Santiago'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
