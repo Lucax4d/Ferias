@@ -1,6 +1,7 @@
 from django import forms
 
-from .models import Puesto
+from .models import Producto, Puesto
+from .permisos import puestos_gestionables
 
 
 class PuestoForm(forms.ModelForm):
@@ -12,3 +13,13 @@ class PuestoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not es_admin:
             del self.fields['vendedor']
+
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ('puesto', 'nombre', 'precio', 'stock', 'activo')
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['puesto'].queryset = puestos_gestionables(user)

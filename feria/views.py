@@ -1,13 +1,14 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from usuarios.decorators import admin_o_vendedor
 from usuarios.models import Perfil
 from usuarios.roles import rol_de
 
-from .forms import PuestoForm
+from .forms import ProductoForm, PuestoForm
 from .models import Producto, Puesto, Vendedor
-from .permisos import puestos_gestionables
+from .permisos import productos_gestionables, puestos_gestionables
 
 
 def inicio(request):
@@ -69,3 +70,55 @@ def puesto_eliminar(request, pk):
         messages.success(request, 'Puesto eliminado.')
         return redirect('puesto_lista')
     return render(request, 'feria/puesto_confirmar_eliminar.html', {'puesto': puesto})
+
+
+def producto_lista(request):
+    propios = productos_gestionables(request.user)
+    productos = Producto.objects.filter(
+        Q(activo=True) | Q(pk__in=propios.values('pk'))
+    ).select_related('puesto__vendedor')
+    return render(request, 'feria/producto_lista.html', {
+        'productos': productos,
+        'gestionables': set(propios.values_list('pk', flat=True)),
+        'puede_crear': rol_de(request.user) in (Perfil.ADMIN, Perfil.VENDEDOR),
+    })
+
+
+@admin_o_vendedor
+def producto_crear(request):
+    if not puestos_gestionables(request.user).exists():
+        messages.error(request, 'Primero necesitas un puesto para agregar productos.')
+        return redirect('puesto_lista')
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Producto creado.')
+            return redirect('producto_lista')
+    else:
+        form = ProductoForm(user=request.user)
+    return render(request, 'feria/producto_form.html', {'form': form, 'titulo': 'Nuevo producto'})
+
+
+@admin_o_vendedor
+def producto_editar(request, pk):
+    producto = get_object_or_404(productos_gestionables(request.user), pk=pk)
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Producto actualizado.')
+            return redirect('producto_lista')
+    else:
+        form = ProductoForm(instance=producto, user=request.user)
+    return render(request, 'feria/producto_form.html', {'form': form, 'titulo': 'Editar producto'})
+
+
+@admin_o_vendedor
+def producto_eliminar(request, pk):
+    producto = get_object_or_404(productos_gestionables(request.user), pk=pk)
+    if request.method == 'POST':
+        producto.delete()
+        messages.success(request, 'Producto eliminado.')
+        return redirect('producto_lista')
+    return render(request, 'feria/producto_confirmar_eliminar.html', {'producto': producto})
