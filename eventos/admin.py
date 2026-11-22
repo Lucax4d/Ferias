@@ -1,6 +1,0 @@
-from django.contrib import admin
-from django.contrib import admin
-from .models import Evento, Asistencia
-
-admin.site.register(Evento)
-admin.site.register(Asistencia)
