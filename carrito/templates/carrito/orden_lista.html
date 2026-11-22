@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block titulo %}Órdenes{% endblock %}
+{% block contenido %}
+<h1>Órdenes</h1>
+<table class="table table-striped">
+  <thead><tr><th>N° de orden</th><th>Usuario</th><th>Fecha</th><th>Total</th><th>Estado</th><th></th></tr></thead>
+  <tbody>
+    {% for o in ordenes %}
+      <tr>
+        <td>{{ o.buy_order }}</td>
+        <td>{{ o.user.username }}</td>
+        <td>{{ o.creada|date:"d/m/Y H:i" }}</td>
+        <td>${{ o.total }}</td>
+        <td>{{ o.get_estado_display }}</td>
+        <td class="text-end"><a class="btn btn-sm btn-outline-primary" href="{% url 'orden_detalle' o.pk %}">Ver</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">Aún no hay órdenes.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
