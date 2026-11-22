@@ -9,7 +9,7 @@
 </div>
 <table class="table table-striped">
   <thead>
-    <tr><th>Producto</th><th>Puesto</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th></tr>
+    <tr><th>Producto</th><th>Puesto</th><th>Precio</th><th>Stock</th><th>Estado</th><th></th><th></th></tr>
   </thead>
   <tbody>
     {% for p in productos %}
@@ -19,6 +19,14 @@
         <td>${{ p.precio }}</td>
         <td>{{ p.stock }}</td>
         <td>{% if p.activo %}Activo{% else %}Inactivo{% endif %}</td>
+        <td>
+          {% if user.is_authenticated and p.activo and p.stock > 0 %}
+            <form method="post" action="{% url 'agregar_al_carrito' p.pk %}" class="d-inline">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-success">Agregar</button>
+            </form>
+          {% endif %}
+        </td>
         <td class="text-end">
           {% if p.pk in gestionables %}
             <a class="btn btn-sm btn-outline-primary" href="{% url 'producto_editar' p.pk %}">Editar</a>
@@ -27,7 +35,7 @@
         </td>
       </tr>
     {% empty %}
-      <tr><td colspan="6">Aún no hay productos.</td></tr>
+      <tr><td colspan="7">Aún no hay productos.</td></tr>
     {% endfor %}
   </tbody>
 </table>
