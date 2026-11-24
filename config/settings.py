@@ -134,3 +134,31 @@ LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'America/Santiago'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
+
+# ---------------------------------------------------------------------------
+# Configuración de entrega: los valores sensibles vienen de variables de entorno.
+# Sin variables, el proyecto sigue funcionando en desarrollo (DEBUG activo).
+# ---------------------------------------------------------------------------
+import os
+
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', SECRET_KEY)
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
+CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get('DJANGO_CSRF_ORIGINS', '').split(',') if o.strip()]
+
+if not DEBUG and 'DJANGO_SECRET_KEY' not in os.environ:
+    raise RuntimeError('Define DJANGO_SECRET_KEY cuando DEBUG está desactivado.')
+
+# Con HTTPS real (despliegue) se activan las cookies seguras y HSTS.
+if os.environ.get('DJANGO_HTTPS') == 'True':
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# La aplicación no envía correos, así que no se configura un backend de producción.
+# Si más adelante se agregan correos, hay que definir MAILERS con un backend real
+# (por ejemplo SMTP) y quitar esta línea.
+SILENCED_SYSTEM_CHECKS = ['mail.E001']
