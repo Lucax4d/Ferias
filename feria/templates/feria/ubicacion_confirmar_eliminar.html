@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %}Eliminar ubicación{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2>Eliminar ubicación</h2>
+    <p>¿Seguro que quieres eliminar <strong>{{ ubicacion.nombre }}</strong>?
+       No se podrá si tiene puestos o eventos asociados.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger">Sí, eliminar</button>
+      <a class="btn btn-secondary" href="{% url 'ubicacion_lista' %}">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
