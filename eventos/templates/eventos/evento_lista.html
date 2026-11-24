@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block titulo %}Eventos{% endblock %}
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Eventos</h1>
+  {% if es_admin %}
+    <a class="btn btn-success" href="{% url 'evento_crear' %}">Nuevo evento</a>
+  {% endif %}
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr><th>Evento</th><th>Fecha</th><th>Ubicación</th><th>Asistentes</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for e in eventos %}
+      <tr>
+        <td>{{ e.nombre }}<br><small class="text-muted">{{ e.descripcion }}</small></td>
+        <td>{{ e.fecha|date:"d/m/Y H:i" }}</td>
+        <td>{{ e.ubicacion.nombre }}</td>
+        <td>{{ e.total }}</td>
+        <td class="text-end">
+          {% if user.is_authenticated %}
+            {% if e.pk in asistire %}
+              <form method="post" action="{% url 'cancelar_asistencia' e.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-secondary">Cancelar asistencia</button>
+              </form>
+            {% else %}
+              <form method="post" action="{% url 'asistir' e.pk %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-success">Asistiré</button>
+              </form>
+            {% endif %}
+          {% endif %}
+          {% if es_admin %}
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'evento_editar' e.pk %}">Editar</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'evento_eliminar' e.pk %}">Eliminar</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">Aún no hay eventos.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

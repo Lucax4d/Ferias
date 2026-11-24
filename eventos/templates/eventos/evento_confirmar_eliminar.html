@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %}Eliminar evento{% endblock %}
+{% block contenido %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2>Eliminar evento</h2>
+    <p>¿Seguro que quieres eliminar <strong>{{ evento.nombre }}</strong>?
+       También se eliminarán las inscripciones de los asistentes.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-danger">Sí, eliminar</button>
+      <a class="btn btn-secondary" href="{% url 'evento_lista' %}">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
