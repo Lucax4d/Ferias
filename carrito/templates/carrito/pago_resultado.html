@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block titulo %}Resultado del pago{% endblock %}
+{% block contenido %}
+{% if orden.estado == 'pagada' %}
+  <div class="alert alert-success">
+    <h2>Pago aprobado</h2>
+    <p>Orden <strong>{{ orden.buy_order }}</strong> por ${{ orden.total }}.<br>
+       Código de autorización: {{ orden.codigo_autorizacion }}</p>
+  </div>
+  <a class="btn btn-success" href="{% url 'orden_detalle' orden.pk %}">Ver detalle de la orden</a>
+{% elif orden.estado == 'rechazada' %}
+  <div class="alert alert-danger">
+    <h2>Pago rechazado o anulado</h2>
+    <p>La orden <strong>{{ orden.buy_order }}</strong> no fue pagada. Tu carrito sigue intacto.</p>
+  </div>
+  <a class="btn btn-success" href="{% url 'ver_carrito' %}">Volver al carrito</a>
+{% else %}
+  <div class="alert alert-warning">
+    <h2>Pago en proceso</h2>
+    <p>No pudimos confirmar el pago de la orden <strong>{{ orden.buy_order }}</strong> todavía.</p>
+  </div>
+  <a class="btn btn-secondary" href="{% url 'orden_detalle' orden.pk %}">Ver la orden</a>
+{% endif %}
+{% endblock %}
