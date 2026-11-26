@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'eventos',
     'feria',
     'usuarios',
@@ -105,3 +107,7 @@ if os.getenv('USE_HTTPS') == 'True':
 
 # La aplicación no envía correos, así que no se configura un backend de producción
 SILENCED_SYSTEM_CHECKS = ['mail.E001']
+
+# Formularios con estilo Bootstrap 5 (django-crispy-forms)
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
