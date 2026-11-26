@@ -3,14 +3,26 @@
 {% block contenido %}
 <h1>Mi carrito</h1>
 {% if items %}
-<table class="table">
+<table class="table align-middle">
   <thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead>
   <tbody>
     {% for item in items %}
       <tr>
         <td>{{ item.producto.nombre }} <small class="text-muted">({{ item.producto.puesto.nombre }})</small></td>
         <td>${{ item.producto.precio }}</td>
-        <td>{{ item.cantidad }}</td>
+        <td>
+          <div class="d-flex align-items-center gap-2">
+            <form method="post" action="{% url 'disminuir_item' item.pk %}">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-secondary" {% if item.cantidad <= 1 %}disabled{% endif %}>-</button>
+            </form>
+            <span>{{ item.cantidad }}</span>
+            <form method="post" action="{% url 'incrementar_item' item.pk %}">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-secondary" {% if item.cantidad >= item.producto.stock %}disabled{% endif %}>+</button>
+            </form>
+          </div>
+        </td>
         <td>${{ item.subtotal }}</td>
         <td class="text-end">
           <form method="post" action="{% url 'quitar_del_carrito' item.pk %}">
