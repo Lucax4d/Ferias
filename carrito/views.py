@@ -108,3 +108,29 @@ def orden_detalle(request, pk):
         'orden': orden,
         'detalles': orden.detalles.all(),
     })
+
+
+@login_required
+@require_POST
+def incrementar_item(request, item_id):
+    item = get_object_or_404(
+        ItemCarrito.objects.select_related('producto'), pk=item_id, carrito__user=request.user
+    )
+    if not item.producto.activo or item.cantidad >= item.producto.stock:
+        messages.warning(request, f'No hay más stock de {item.producto.nombre}.')
+    else:
+        item.cantidad += 1
+        item.save(update_fields=['cantidad'])
+    return redirect('ver_carrito')
+
+
+@login_required
+@require_POST
+def disminuir_item(request, item_id):
+    item = get_object_or_404(ItemCarrito, pk=item_id, carrito__user=request.user)
+    if item.cantidad > 1:
+        item.cantidad -= 1
+        item.save(update_fields=['cantidad'])
+    else:
+        messages.info(request, 'La cantidad mínima es 1. Usa Quitar para sacar el producto.')
+    return redirect('ver_carrito')
