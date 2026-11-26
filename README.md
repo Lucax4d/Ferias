@@ -29,6 +29,7 @@ cd Ferias
 python -m venv venv
 source venv/Scripts/activate      # PowerShell: venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+cp .env.example .env        # completa SECRET_KEY y las credenciales de Webpay
 python manage.py migrate
 python manage.py cargar_datos
 python manage.py runserver
@@ -60,7 +61,21 @@ Tarjeta de prueba Visa `4051 8856 0044 6623`, CVV `123`, vencimiento futuro. En 
 
 ## Variables de entorno
 
-Ver `.env.example`. Con `DJANGO_DEBUG=False` es obligatorio definir `DJANGO_SECRET_KEY`. Con HTTPS real se activa `DJANGO_HTTPS=True`. Revisión de despliegue: `python manage.py check --deploy`.
+La configuración sensible vive en un archivo `.env` que **no se sube a GitHub**. La plantilla es `.env.example`:
+
+| Variable | Para qué sirve |
+|---|---|
+| `SECRET_KEY` | Clave con la que Django firma sesiones y cookies |
+| `DEBUG` | `True` en desarrollo; en producción debe ser `False` |
+| `ALLOWED_HOSTS` | Direcciones desde las que se puede acceder, separadas por coma |
+| `WEBPAY_COMMERCE_CODE`, `WEBPAY_API_KEY` | Credenciales de prueba (sandbox) de Transbank |
+| `WEBPAY_ENV` | `TEST` usa el sandbox; `LIVE` usa la integración real |
+
+Para generar una clave nueva:
+
+```bash
+python -c "from django.core.management.utils import get_random_secret_key as k; print(k())"
+```
 
 ## Ramas y versiones
 
