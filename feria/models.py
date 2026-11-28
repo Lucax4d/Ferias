@@ -38,6 +38,9 @@ class Producto(models.Model):
     precio = models.PositiveIntegerField()  # CLP, sin decimales
     stock = models.PositiveIntegerField(default=0)
     activo = models.BooleanField(default=True)
+    descripcion = models.TextField(blank=True)
+    # Imagen de portada opcional (requiere la librería Pillow)
+    portada = models.ImageField(upload_to='portadas', blank=True, null=True)
 
     def __str__(self):
         return self.nombre

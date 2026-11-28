@@ -5,9 +5,15 @@ Los valores sensibles se leen desde el archivo .env (ver .env.example).
 import os
 from pathlib import Path
 
+from django.contrib.messages import constants as message_constants
+
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+MESSAGE_TAGS = {
+    message_constants.ERROR: 'danger',
+}
 
 # Carga las variables del archivo .env (no se sube a GitHub)
 load_dotenv(BASE_DIR / '.env')

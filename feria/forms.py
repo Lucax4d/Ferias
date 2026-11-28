@@ -18,7 +18,7 @@ class PuestoForm(forms.ModelForm):
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ('puesto', 'nombre', 'precio', 'stock', 'activo')
+        fields = ('puesto', 'nombre', 'descripcion', 'portada', 'precio', 'stock', 'activo')
 
     def __init__(self, *args, user, **kwargs):
         super().__init__(*args, **kwargs)
