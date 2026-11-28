@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo %}Catálogo{% endblock %}
+{% block contenido %}
+<h1 class="mb-4">Catálogo de productos</h1>
+<div class="d-flex flex-wrap justify-content-center">
+  {% for p in productos %}
+    {% include 'feria/_tarjeta_producto.html' with producto=p %}
+  {% empty %}
+    <p class="text-muted">Aún no hay productos publicados.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -12,7 +12,7 @@ from .permisos import productos_gestionables, puestos_gestionables
 
 
 def inicio(request):
-    productos = Producto.objects.filter(activo=True).select_related('puesto')[:12]
+    productos = Producto.objects.filter(activo=True).select_related('puesto__vendedor', 'puesto__ubicacion')[:12]
     return render(request, 'feria/inicio.html', {'productos': productos})
 
 
@@ -90,7 +90,7 @@ def producto_crear(request):
         messages.error(request, 'Primero necesitas un puesto para agregar productos.')
         return redirect('puesto_lista')
     if request.method == 'POST':
-        form = ProductoForm(request.POST, user=request.user)
+        form = ProductoForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Producto creado.')
@@ -104,7 +104,7 @@ def producto_crear(request):
 def producto_editar(request, pk):
     producto = get_object_or_404(productos_gestionables(request.user), pk=pk)
     if request.method == 'POST':
-        form = ProductoForm(request.POST, instance=producto, user=request.user)
+        form = ProductoForm(request.POST, request.FILES, instance=producto, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Producto actualizado.')
@@ -122,3 +122,19 @@ def producto_eliminar(request, pk):
         messages.success(request, 'Producto eliminado.')
         return redirect('producto_lista')
     return render(request, 'feria/producto_confirmar_eliminar.html', {'producto': producto})
+
+
+def producto_catalogo(request):
+    productos = Producto.objects.filter(activo=True).select_related(
+        'puesto__vendedor', 'puesto__ubicacion'
+    )
+    return render(request, 'feria/producto_catalogo.html', {'productos': productos})
+
+
+def producto_detalle(request, pk):
+    producto = get_object_or_404(
+        Producto.objects.select_related('puesto__vendedor', 'puesto__ubicacion'),
+        pk=pk,
+        activo=True,
+    )
+    return render(request, 'feria/producto_detalle.html', {'producto': producto})

@@ -1,0 +1,7 @@
+.format-img {
+    width: 100%;
+    height: 220px;
+    /* recorta la imagen para que no se deforme */
+    object-fit: cover;
+    object-position: center;
+}
